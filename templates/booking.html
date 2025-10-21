@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+
+{% block title %}Booking Page{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<script defer src="{{ url_for('static', filename='script.js') }}"></script>
+
+<!-- Booking Form Section -->
+<section class="booking-section">
+    <form action="{{ url_for('booking') }}" method="POST" class="booking-form" autocomplete="off">
+        <!-- Choose Provider -->
+        <div class="input-group">
+            <label for="company">Choose Provider</label>
+            <select name="company" id="company" required>
+                <option value="LPG Cylinder">LPG Cylinder</option>
+                <option value="Indane Gas">Indane Gas</option>
+                <option value="HP Gas">HP Gas</option>
+                <option value="Bharat Gas">Bharat Gas</option>
+            </select>
+        </div>
+
+        <!-- Delivery Address -->
+        <div class="input-group">
+            <label for="delivery_address">Delivery Address</label>
+            <input type="text" id="delivery_address" name="delivery_address" 
+                   value="{{ user_address or '' }}" required>
+        </div>
+
+        <!-- Pincode (Read-only) -->
+        <div class="input-group">
+            <label for="pincode">Pincode</label>
+            <input type="text" id="pincode" name="pincode" 
+                   value="{{ pincode or '' }}" readonly>
+        </div>
+
+        <!-- Booking Date -->
+        <div class="input-group">
+            <label for="booking_date">Date</label>
+            <input type="date" id="booking_date" name="booking_date" 
+                   value="{{ today }}" readonly required>
+        </div>
+
+        <!-- OTP Section (Visible only if otp_sent=True) -->
+        {% if otp_sent %}
+        <div class="otp-section">
+            <div class="input-group">
+                <label for="otp">Enter OTP</label>
+                <input type="text" id="otp" name="otp" maxlength="4" 
+                       oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,4)" required>
+            </div>
+            <p>An OTP has been sent to your registered mobile number. Please enter it to confirm booking.</p>
+        </div>
+        {% endif %}
+
+        <!-- Buttons Section -->
+        <div class="form-actions">
+            {% if otp_sent %}
+                <button type="submit" name="booking_type" value="call_otp" class="btn primary">
+                    Verify OTP & Proceed
+                </button>
+            {% else %}
+                <button type="submit" name="booking_type" value="confirm" class="btn primary">
+                    Confirm Booking
+                </button>
+                <button type="submit" name="booking_type" value="call" class="btn secondary">
+                    Book via Call
+                </button>
+            {% endif %}
+        </div>
+    </form>
+</section>
+
+<!-- Flash Message Styles -->
+<style>
+    .flash {
+        padding: 10px;
+        margin-bottom: 10px;
+        border-radius: 5px;
+        position: relative;
+    }
+
+    .flash.success {
+        background-color: #d4edda;
+        color: #155724;
+    }
+
+    .flash.info {
+        background-color: #cce5ff;
+        color: #004085;
+    }
+
+    .flash.error {
+        background-color: #f8d7da;
+        color: #721c24;
+    }
+
+    .close-btn {
+        position: absolute;
+        top: 5px;
+        right: 10px;
+        cursor: pointer;
+        font-weight: bold;
+    }
+</style>
+{% endblock %}

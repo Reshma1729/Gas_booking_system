@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+{% block title %}Payment{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<script defer src="{{ url_for('static', filename='script.js') }}"></script>
+
+<header>
+  <h1>Payment</h1>
+</header>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <div class="flashes">
+      {% for category, msg in messages %}
+        <div class="flash {{ category }}">
+          {{ msg }}
+          <button class="close-btn" onclick="this.parentElement.remove()">×</button>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
+
+<form id="payment-form" action="/payment" method="POST" class="payment-form">
+  <input type="hidden" name="booking_id" value="{{ booking_id }}">
+
+  <div class="input-group">
+    <label>Payment</label>
+    <select id="payment_type" name="payment_type" required>
+      <option value="">--Select Payment Method--</option>
+      <option value="cod">Cash on Delivery</option>
+      <option value="card">Credit / Debit Card</option>
+      <option value="online">UPI / Net Banking</option>
+    </select>
+  </div>
+
+  <div id="card-details" class="hidden">
+    <div class="input-group">
+      <label>Card Number</label>
+      <input type="text" id="cardNumber" name="cardNumber" maxlength="16"
+             oninput="this.value=this.value.replace(/\D/g,'').slice(0,16)">
+    </div>
+    <div class="input-group">
+      <label>Expiry Date</label>
+      <input type="text" id="expiryDate" name="expiryDate" placeholder="MM/YY">
+    </div>
+    <div class="input-group">
+      <label>CVV</label>
+      <input type="password" id="cvv" name="cvv" maxlength="3"
+             oninput="this.value=this.value.replace(/\D/g,'').slice(0,3)">
+    </div>
+  </div>
+
+  <div id="online-details" class="hidden">
+    <div class="input-group">
+      <label>UPI ID</label>
+      <input type="text" id="upiId" name="upiId" placeholder="example@upi">
+    </div>
+  </div>
+
+  <div class="input-group">
+    <label>Amount</label>
+    <input type="number" name="amount" step="0.01" value="800" required>
+  </div>
+
+  <div class="form-actions">
+    <a href="{{ url_for('booking') }}" class="btn secondary">Back</a>
+    <button type="submit" class="btn primary">Pay Now</button>
+  </div>
+</form>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  const paymentType = document.getElementById("payment_type");
+  const cardDetails = document.getElementById("card-details");
+  const onlineDetails = document.getElementById("online-details");
+
+  // Show/hide input fields based on payment type
+  paymentType.addEventListener("change", function() {
+    cardDetails.classList.add("hidden");
+    onlineDetails.classList.add("hidden");
+
+    if (this.value === "card") {
+      cardDetails.classList.remove("hidden");
+    } else if (this.value === "online") {
+      onlineDetails.classList.remove("hidden");
+    }
+  });
+
+  // Conditional validation on form submit
+  const form = document.getElementById("payment-form");
+  form.addEventListener("submit", function(event) {
+    const type = paymentType.value;
+
+    if (type === "card") {
+      const cardNum = document.getElementById("cardNumber").value.trim();
+      const expDate = document.getElementById("expiryDate").value.trim();
+      const cvv = document.getElementById("cvv").value.trim();
+      if (!cardNum || !expDate || !cvv) {
+        alert("Please fill all card details for card payment.");
+        event.preventDefault();
+        return false;
+      }
+    } else if (type === "online") {
+      const upi = document.getElementById("upiId").value.trim();
+      if (!upi) {
+        alert("Please enter your UPI ID for online payment.");
+        event.preventDefault();
+        return false;
+      }
+    }
+    // COD requires no extra validation
+  });
+});
+</script>
+{% endblock %}
