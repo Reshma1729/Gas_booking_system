@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script defer src="{{ url_for('static', filename='script.js') }}"></script>
+    <title>Gas Booking Management System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }        
+        
+        .close-btn {
+            position: absolute;
+            top: 5px;
+            right: 10px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1000px;
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            position: relative;
+            z-index: 1;
+        }
+        
+        header {
+            background: linear-gradient(to right, #2c3e50, #3498db);
+            color: white;
+            padding: 25px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .header-content h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .header-content p {
+            font-size: 1.2rem;
+            font-style: italic;
+            opacity: 0.9;
+        }
+        
+        .main-content {
+            display: flex;
+            flex-wrap: wrap;
+            padding: 30px;
+            gap: 30px;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .form-container {
+            flex: 1;
+            min-width: 300px;
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .form-toggle {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .toggle-btn {
+            flex: 1;
+            padding: 12px;
+            text-align: center;
+            background: none;
+            border: none;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #7f8c8d;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .toggle-btn.active {
+            color: #3498db;
+            border-bottom: 3px solid #3498db;
+        }
+        
+        .form {
+            display: none;
+        }
+        
+        .form.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .form h2 {
+            margin-bottom: 20px;
+            color: #2c3e50;
+            text-align: center;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #34495e;
+        }
+        
+        .input-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: border 0.3s;
+        }
+        
+        .input-group input:focus {
+            border-color: #3498db;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+        }
+        
+        .btn {
+            width: 100%;
+            padding: 14px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .btn:hover {
+            background: #2980b9;
+        }
+        
+        .cylinder-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            overflow: hidden;
+            opacity: 0.1;
+        }
+        
+        .cylinder {
+            position: absolute;
+            width: 200px;
+            height: 350px;
+            background: #e74c3c;
+            border-radius: 100px 100px 20px 20px;
+            box-shadow: inset -15px -30px 0 rgba(0, 0, 0, 0.2);
+        }
+        
+        .cylinder:before {
+            content: '';
+            position: absolute;
+            top: -40px;
+            left: 50px;
+            width: 100px;
+            height: 50px;
+            background: #c0392b;
+            border-radius: 25px 25px 0 0;
+        }
+        
+        .cylinder:after {
+            content: '';
+            position: absolute;
+            top: -15px;
+            left: 75px;
+            width: 50px;
+            height: 20px;
+            background: #f1c40f;
+            border-radius: 10px;
+        }
+        
+        .cylinder-1 { top: 10%; left: 5%; transform: rotate(5deg); }
+        .cylinder-2 { top: 20%; right: 10%; transform: rotate(-8deg); }
+        .cylinder-3 { bottom: 15%; left: 15%; transform: rotate(12deg); }
+        .cylinder-4 { bottom: 5%; right: 5%; transform: rotate(-5deg); }
+        
+        .flame {
+            position: absolute;
+            top: -60px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 80px;
+            background: #ff9d00;
+            border-radius: 50% 50% 20% 20%;
+            box-shadow: 0 0 30px #ff9d00, 0 0 60px #ff9d00;
+            animation: flicker 1.5s infinite alternate;
+        }
+        
+        @keyframes flicker {
+            0%, 100% { transform: translateX(-50%) scaleY(1); opacity: 0.9; }
+            50% { transform: translateX(-50%) scaleY(1.2); opacity: 1; }
+        }
+        
+        .features {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            margin-top: 20px;
+            gap: 15px;
+        }
+        
+        .feature {
+            text-align: center;
+            flex: 1;
+            min-width: 150px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .feature i {
+            font-size: 2rem;
+            color: #3498db;
+            margin-bottom: 10px;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            background: #2c3e50;
+            color: white;
+        }
+        
+        /* 🔔 Flash Message Container */
+        .flashes {
+            width: 100%;
+            margin: 15px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        /* 💬 Individual Alert Styles */
+        .alert {
+            padding: 12px 18px;
+            border-radius: 8px;
+            font-weight: 500;
+            letter-spacing: 0.4px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+            position: relative;
+            opacity: 0.95;
+            animation: slideDown 0.4s ease-out;
+            transition: all 0.3s ease;
+        }
+
+        /* 🟢 Success Message */
+        .alert.success {
+            background-color: #e9f7ef;
+            border-left: 6px solid #2ecc71;
+            color: #2e7d32;
+        }
+
+        /* 🔴 Error Message */
+        .alert.error {
+            background-color: #fdecea;
+            border-left: 6px solid #e74c3c;
+            color: #c0392b;
+        }
+
+        /* 🟠 Warning Message */
+        .alert.warning {
+            background-color: #fff4e5;
+            border-left: 6px solid #f39c12;
+            color: #b9770e;
+        }
+
+        /* 🔵 Info Message */
+        .alert.info {
+            background-color: #e8f4fd;
+            border-left: 6px solid #3498db;
+            color: #21618c;
+        }
+
+        /* Hover Effect */
+        .alert:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        /* ✅ Optional Close Button */
+        .alert::after {
+            content: "×";
+            position: absolute;
+            top: 8px;
+            right: 14px;
+            font-size: 20px;
+            cursor: pointer;
+            color: inherit;
+            transition: 0.3s;
+        }
+        .alert::after:hover {
+            transform: scale(1.2);
+            opacity: 0.7;
+        }
+
+        /* ✨ Animations */
+        @keyframes slideDown {
+            from {
+                transform: translateY(-10px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-content { flex-direction: column; }
+            .header-content h1 { font-size: 2rem; }
+            .cylinder { width: 150px; height: 250px; }
+            .cylinder:before { top: -30px; left: 35px; width: 80px; height: 40px; }
+            .cylinder:after { top: -10px; left: 55px; width: 40px; height: 15px; }
+            .flame { top: -45px; width: 30px; height: 60px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="cylinder-background">
+            <div class="cylinder cylinder-1"><div class="flame"></div></div>
+            <div class="cylinder cylinder-2"><div class="flame"></div></div>
+            <div class="cylinder cylinder-3"><div class="flame"></div></div>
+            <div class="cylinder cylinder-4"><div class="flame"></div></div>
+        </div>
+        
+        <header>
+            <div class="header-content">
+                <h1>Gas Booking Management System</h1>
+                <p>"Fueling Lives with Safety and Convenience"</p>
+            </div>
+        </header>
+        
+        <div class="main-content">
+            <div class="form-container">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="flashes">
+                    {% for category, msg in messages %}
+                        <div class="alert {{ category }}">
+                        {{ msg }}
+                        </div>
+                    {% endfor %}
+                    </div>
+                {% endif %}
+                {% endwith %}
+
+                <div class="form-toggle">
+                    <button class="toggle-btn active" data-target="register-form">Register</button>
+                    <button class="toggle-btn" data-target="login-form">Login</button>
+                </div>
+                
+                <!-- Register Form -->
+                <form id="register-form" class="form active" method="POST" action="/register" autocomplete="off">
+                    <h2>Create New Account</h2>
+                    <div class="input-group">
+                        <label for="name">Full Name</label>
+                        <input type="text" name="name" id="name" placeholder="Enter your full name" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="phone">Phone Number</label>
+                        <input type="tel" name="phone" id="phone" placeholder="Enter your phone number" required maxlength="10">
+                    </div>
+                    <div class="input-group">
+                        <label for="aadhar">Aadhar Number</label>
+                        <input type="text" name="aadhaar" id="aadhar" placeholder="Enter your Aadhar number" required maxlength="12">
+                    </div>
+                    <div class="input-group">
+                        <label for="address">Address</label>
+                        <input type="text" name="address" id="address" placeholder="Enter your address here" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="pincode">Pincode</label>
+                        <input 
+                                type="text" 
+                                name="pincode" 
+                                id="pincode" 
+                                placeholder="Enter your area pincode" 
+                                required 
+                                maxlength="6" 
+                                pattern="\d{6}" 
+                                title="Pincode must be 6 digits"
+                                oninput="this.value = this.value.replace(/[^0-9]/g,'').slice(0,6);">                    
+                    </div>
+                    <div class="input-group">
+                        <label for="password">Password</label>
+                        <input type="password" name="password" id="password" placeholder="Enter password" required>
+                    </div>
+                    <button type="submit" class="btn">Register</button>
+                </form>
+                
+                <!-- Login Form -->
+                <form id="login-form" class="form" method="POST" action="/login" autocomplete="off">
+                    <h2>Login to Your Account</h2>
+                    <div class="input-group">
+                        <label for="login-phone">Phone Number</label>
+                        <input type="tel" name="phone" id="login-phone" placeholder="Enter your phone number" required maxlength="10">
+                    </div>
+                    <div class="input-group">
+                        <label for="login-password">Password</label>
+                        <input type="password" name="password" id="login-password" placeholder="Enter password" required>
+                    </div>
+                    <button type="submit" class="btn">Login</button>
+                </form>
+                
+                <div class="features">
+                    <div class="feature">
+                        <i>⏱️</i>
+                        <h3>Quick Booking</h3>
+                        <p>Book your gas cylinder in just a few clicks</p>
+                    </div>
+                    <div class="feature">
+                        <i>🚚</i>
+                        <h3>Fast Delivery</h3>
+                        <p>Get your cylinder delivered at your doorstep</p>
+                    </div>
+                    <div class="feature">
+                        <i>🔒</i>
+                        <h3>Secure Payment</h3>
+                        <p>Safe and secure payment options</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>&copy; 2025 Gas Booking Management System. All rights reserved.</p>
+        </footer>
+    </div>
+
+    <script>
+        // Toggle between Register and Login forms
+        document.querySelectorAll('.toggle-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                document.querySelectorAll('.toggle-btn').forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
+
+                document.querySelectorAll('.form').forEach(form => form.classList.remove('active'));
+                document.getElementById(this.getAttribute('data-target')).classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>

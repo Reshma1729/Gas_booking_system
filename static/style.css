@@ -1,0 +1,183 @@
+:root {
+  --primary: #3498db;
+  --accent: #e67e22;
+  --muted: #777;
+}
+
+* { box-sizing: border-box; }
+body { font-family: "Segoe UI", Tahoma, Verdana, sans-serif; background:#f4f6f8; margin:0; color:#222; }
+.container { max-width:900px; margin:40px auto; background:#fff; padding:22px; border-radius:10px; box-shadow:0 8px 20px rgba(0,0,0,0.06); }
+
+header h1 { color:var(--accent); margin:0 0 6px; }
+header p { margin:0 0 18px; color:var(--muted); }
+/* Header wrapper */
+.header-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    border-bottom: 2px solid #ddd;
+    flex-wrap: wrap;
+}
+#nobooking{
+  text-align: center;
+}
+.forms { display:flex; gap:20px; flex-direction:column; }
+.form { display:block; padding:10px; }
+.form.hidden { display:none; }
+input, select, textarea { width:100%; padding:8px 12px; margin:6px 0 8px; border:1px solid #ddd; border-radius:6px; font-size:14px; }
+.btn { display:inline-block; padding:10px 16px; border-radius:8px; border:none; cursor:pointer; }
+.btn.primary { background:var(--primary); color:white; }
+.btn.secondary { background:#95a5a6; color:white; }
+.actions { display:flex; gap:10px; justify-content:flex-end; margin-top:12px; }
+table.table { width:100%; border-collapse:collapse; margin-top:18px; }
+table.table th, table.table td { padding:10px; border-bottom:1px solid #eee; text-align:left; }
+/* 🔔 Flash Message Container */
+.flashes {
+    width: 100%;
+    margin: 15px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    animation: fadeIn 0.5s ease-in-out;
+}
+.flash {
+  position: relative;
+  padding: 12px 40px 12px 15px;
+  border-radius: 6px;
+  margin-bottom: 10px;
+  font-weight: 500;
+  animation: fadeIn 0.4s ease-in-out;
+}
+.flash.success { background: #d4edda; color: #155724; border-left: 5px solid #28a745; }
+.flash.info { background: #d1ecf1; color: #0c5460; border-left: 5px solid #17a2b8; }
+.flash.error { background: #f8d7da; color: #721c24; border-left: 5px solid #dc3545; }
+.close-btn {
+  position: absolute;
+  right: 10px;
+  top: 7px;
+  background: transparent;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  color: #555;
+}
+.small { max-width:420px; margin:40px auto; }
+.hidden {
+  display: none;
+}
+
+/* 💬 Individual Alert Styles */
+.alert {
+    padding: 12px 18px;
+    border-radius: 8px;
+    font-weight: 500;
+    letter-spacing: 0.4px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+    position: relative;
+    opacity: 0.95;
+    animation: slideDown 0.4s ease-out;
+    transition: all 0.3s ease;
+}
+
+/* 🟢 Success Message */
+.alert.success {
+    background-color: #e9f7ef;
+    border-left: 6px solid #2ecc71;
+    color: #2e7d32;
+}
+
+/* 🔴 Error Message */
+.alert.error {
+    background-color: #fdecea;
+    border-left: 6px solid #e74c3c;
+    color: #c0392b;
+}
+
+/* 🟠 Warning Message */
+.alert.warning {
+    background-color: #fff4e5;
+    border-left: 6px solid #f39c12;
+    color: #b9770e;
+}
+
+/* 🔵 Info Message */
+.alert.info {
+    background-color: #e8f4fd;
+    border-left: 6px solid #3498db;
+    color: #21618c;
+}
+
+/* Hover Effect */
+.alert:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* ✅ Optional Close Button */
+.alert::after {
+    content: "×";
+    position: absolute;
+    top: 8px;
+    right: 14px;
+    font-size: 20px;
+    cursor: pointer;
+    color: inherit;
+    transition: 0.3s;
+}
+.alert::after:hover {
+    transform: scale(1.2);
+    opacity: 0.7;
+}
+
+/* ✨ Animations */
+@keyframes slideDown {
+    from {
+        transform: translateY(-10px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+.success-container {
+  text-align: center;
+  margin-top: 10px;
+  background: #e8f9f0;
+  border: 1px solid #b2e6c2;
+  border-radius: 10px;
+  padding: 30px;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+}
+
+.success-container h2 {
+  color: #2e7d32;
+}
+
+.success-container p {
+  font-size: 1.1em;
+  margin: 10px 0;
+}
+
+.success-container .btn.primary {
+  background: #2e7d32;
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 6px;
+  text-decoration: none;
+  display: inline-block;
+  margin-top: 10px;
+}
